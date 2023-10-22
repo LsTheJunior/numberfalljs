@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Number Catcher Game</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        #game-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container"></div>
+    <script>
+        const gameContainer = document.getElementById('game-container');
+        let score = 0;
+
+        gameContainer.style.cursor = 'none';
+
+        gameContainer.addEventListener('mousemove', (e) => {
+            const mouseX = e.clientX;
+            const numbers = document.querySelectorAll('.number');
+
+            numbers.forEach((number) => {
+                const numberX = number.getBoundingClientRect().x;
+                const numberY = number.getBoundingClientRect().y;
+
+                if (mouseX >= numberX && mouseX <= numberX + number.offsetWidth) {
+                    number.remove();
+                    score += 2;
+                    updateScore();
+                }
+            });
+        });
+
+        function updateScore() {
+            const scoreDisplay = document.getElementById('score-display');
+            if (!scoreDisplay) {
+                const scoreElement = document.createElement('div');
+                scoreElement.id = 'score-display';
+                gameContainer.appendChild(scoreElement);
+                scoreDisplay = scoreElement;
+            }
+            scoreDisplay.textContent = `Score: ${score}`;
+        }
+
+        function createNumber() {
+            const number = document.createElement('div');
+            number.classList.add('number');
+            number.textContent = Math.floor(Math.random() * 10) + 1;
+
+            const xPos = Math.random() * (window.innerWidth - 40);
+            number.style.left = xPos + 'px';
+
+            gameContainer.appendChild(number);
+
+            setTimeout(() => {
+                number.remove();
+            }, 3000); // Adjust the delay as needed
+
+            number.addEventListener('animationiteration', createNumber);
+        }
+
+        createNumber(); // Start the game by creating the first number
+
+        updateScore(); // Display initial score
+    </script>
+</body>
+</html>
